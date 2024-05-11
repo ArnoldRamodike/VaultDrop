@@ -1,8 +1,6 @@
 import { ConvexError, v } from 'convex/values'
 import {mutation, query} from './_generated/server'
 
-
-
 export const createFile = mutation({
     args:{
         name: v.string()
