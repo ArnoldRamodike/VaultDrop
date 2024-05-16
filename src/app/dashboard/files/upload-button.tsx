@@ -65,7 +65,7 @@ export default function UploadButton() {
     await createfile({
     name: values.title,
     fileId: storageId,
-    orgId: 'org_2gT1isavMs69qCsy7YRv2hbh1VQ',
+    orgId: orgId,
     type: types[values.file[0].type],
     })
 

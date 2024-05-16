@@ -19,7 +19,7 @@ const FavoritesPage = () => {
       orgId = organization.organization?.id ?? user.user?.id;
     }
   
-    const files = useQuery(api.files.getFiles, orgId?  {orgId, query} : 'skip'  );
+    const files = useQuery(api.files.getFiles, orgId?  {orgId, favorites: true, query} : 'skip'  );
   return (
     <div>
          <div className="flex justify-between items-center mb-8">

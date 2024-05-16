@@ -15,6 +15,7 @@ import Image from 'next/image';
 function FileCardActions({file}: {file: Doc<'files'>} ){
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const deleteFile = useMutation(api.files.deleteFile);
+    const toogleFavorite = useMutation(api.files.toogleFavorite);
     const { toast } = useToast()
     return(
         <>
@@ -23,8 +24,8 @@ function FileCardActions({file}: {file: Doc<'files'>} ){
                 <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your account
-                    and remove your data from our servers.
+                    This action cannot be undone. This will permanently delete your file
+                    and remove the data from our servers.
                 </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -47,12 +48,14 @@ function FileCardActions({file}: {file: Doc<'files'>} ){
 
         <DropdownMenu>
             <DropdownMenuTrigger><MoreVertical/></DropdownMenuTrigger>
-            <DropdownMenuContent onClick={() => setIsConfirmOpen(true)}>
-            <DropdownMenuItem className='flex gap-1 text-blue-600 items-center cursor-pointer'> 
+            <DropdownMenuContent >
+            <DropdownMenuItem onClick={() => toogleFavorite({fileId: file._id })} 
+                    className='flex gap-1 text-blue-600 items-center cursor-pointer'> 
                     <StarIcon className='w-4 h-4'/> Favorite
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className='flex gap-1 text-red-600 items-center cursor-pointer'> 
+                <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}
+                     className='flex gap-1 text-red-600 items-center cursor-pointer'> 
                     <Trash2Icon className='w-4 h-4'/> Delete
                 </DropdownMenuItem>
            
@@ -87,7 +90,7 @@ const FileCard = ({file}: {file: Doc<'files'>} ) => {
             </CardHeader>
             <CardContent className='h-[200px] flex justify-center items-center'>
                { file.type === 'image' &&(
-                <Image alt={file.name} width={200} height={200} src={getFileUrl('f4f4453e-98e9-4fab-ac7e-0db327d63558')}/>
+                <Image alt={file.name} width={200} height={200} src={getFileUrl(file.fileId)}/>
                )}
                 { file.type === 'csv' && <GanttChartIcon className='w-20 h-20'/>}
                 { file.type === 'pdf' && <FileTextIcon className='w-20 h-20'/>}

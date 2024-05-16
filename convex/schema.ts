@@ -9,10 +9,14 @@ export default defineSchema({
     type: fileTypes,
     orgId: v.string(),
     fileId: v.id('_storage')  
-  }).index(
-    "by_orgId", 
-    ["orgId"]
-  ),
+  }).index("by_orgId", ["orgId"]),
+
+  favorites: defineTable({
+    fileId: v.id('files'),
+    orgId: v.string(),
+    userId: v.id('users')
+  }).index("by_userId_orgId_fieldId", ["userId", "orgId", "fileId"]),
+
   users: defineTable({
     tokenIdentifier: v.string(),
     orgId: v.array(v.string()),
