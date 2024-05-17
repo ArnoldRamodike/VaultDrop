@@ -39,7 +39,7 @@ const FavoritesPage = () => {
                 <div className="flex-col flex gap-8 w-full items-center mt-12">
                     <Image src={'/empty.svg'} alt="empty" width={300} height={300} className=""/>
                     <div className="text-2xl font-semibold">
-                    You have no files go and upload files
+                    You have no Favored files go and upload files
                     </div>
                 </div>
                 
