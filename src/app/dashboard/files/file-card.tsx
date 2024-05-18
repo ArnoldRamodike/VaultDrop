@@ -3,11 +3,11 @@ import {  Card,  CardContent,  CardDescription,  CardFooter, CardHeader, CardTit
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, 
     AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger} from "@/components/ui/alert-dialog"
-  
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Doc, Id } from '../../../../convex/_generated/dataModel'
-import { Button } from '@/components/ui/button'
-import {  FileTextIcon, GanttChartIcon, ImageIcon, MoreVertical, StarHalfIcon, StarIcon, Trash2Icon, UndoIcon } from 'lucide-react'
-import { useMutation } from 'convex/react';
+import { formatRelative } from 'date-fns'
+import {  Download, FileTextIcon, GanttChartIcon, ImageIcon, MoreVertical, StarHalfIcon, StarIcon, Trash2Icon, UndoIcon } from 'lucide-react'
+import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 import { useToast } from '@/components/ui/use-toast';
 import Image from 'next/image';
@@ -18,6 +18,7 @@ function FileCardActions({file, isFavorited}: {file: Doc<'files'>, isFavorited: 
     const deleteFile = useMutation(api.files.deleteFile);
     const restoreFile = useMutation(api.files.restoreFile);
     const toogleFavorite = useMutation(api.files.toogleFavorite);
+
     const { toast } = useToast()
     return(
         <>
@@ -86,6 +87,12 @@ function FileCardActions({file, isFavorited}: {file: Doc<'files'>, isFavorited: 
                      }
                    
                 </DropdownMenuItem>
+                <DropdownMenuSeparator/>
+                <DropdownMenuItem onClick={() => {
+                  window.open(getFileUrl(file.fileId), "_blank");
+                }}>
+                  <Download className='w-4 h-4' /> Download 
+                </DropdownMenuItem>
                 </Protect>
             </DropdownMenuContent>
         </DropdownMenu>
@@ -99,6 +106,11 @@ function getFileUrl(fileId: Id<'_storage'>): string {
 }
   
 const FileCard = ({file, favorites}: {file: Doc<'files'>, favorites: Doc<'favorites'>[]} ) => {
+
+    const userProfile = useQuery(api.users.getUserProfile,{
+         userId: file.userId,
+    });
+    
     const typeIcons= {
         image: <ImageIcon/>,
         pdf: <FileTextIcon/>,
@@ -125,12 +137,20 @@ const FileCard = ({file, favorites}: {file: Doc<'files'>, favorites: Doc<'favori
                 { file.type === 'csv' && <GanttChartIcon className='w-20 h-20'/>}
                 { file.type === 'pdf' && <FileTextIcon className='w-20 h-20'/>}
             </CardContent>
-            <CardFooter className='flex items-center justify-center'>
-                <Button onClick={() => {
-                  window.open(getFileUrl(file.fileId), "_blank");
-                }}>
-                    Download 
-                </Button>
+            <CardFooter className='flex justify-between '>
+                <div className="flex gap-2 text-xs text-gray-600 w-40 items-center">
+                    <Avatar className='w-8 h-8'>
+                        <AvatarImage src={userProfile?.image} />
+                        <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                {userProfile?.name}
+                polly mayson
+                </div>
+               <div className="flex text-xs text-gray-600">
+                 uploaded {formatRelative(new Date(file._creationTime), new Date())}
+               </div>
+
+               
             </CardFooter>
         </Card>
   )
