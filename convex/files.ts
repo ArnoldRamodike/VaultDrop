@@ -1,5 +1,5 @@
 import { ConvexError, v } from 'convex/values'
-import {mutation, query} from './_generated/server'
+import {internalMutation, mutation, query} from './_generated/server'
 import { getUser } from './users';
 import { MutationCtx, QueryCtx } from "./_generated/server";
 import { fileTypes } from './schema';
@@ -66,6 +66,7 @@ export const getFiles = query({
         orgId: v.string(),
         query: v.optional(v.string()),
         favorites: v.optional(v.boolean()),
+        deletedOnly: v.optional(v.boolean()),
     },
     async handler(ctx, args){
     
@@ -95,9 +96,31 @@ export const getFiles = query({
                 files = files.filter(file => favorites.some((favorite) => favorite.fileId === file._id));
             }
 
+            if (args.deletedOnly) {
+                files = files.filter((file) => file.shouldDelete );
+            }else{
+                files = files.filter((file) => !file.shouldDelete );
+            }
+
             return files
     }
 })
+
+export const deleteAllFile = internalMutation({
+    args: {},
+    async handler(ctx, args) {
+
+        const files = await ctx.db.query('files')
+        .withIndex('by_shouldDelete', q => q.eq('shouldDelete', true))
+        .collect();
+
+        await Promise.all(files.map(async (file) => {
+            await ctx.storage.delete(file.fileId)
+            return await ctx.db.delete(file._id)
+        }));
+
+    }
+});
 
 export const deleteFile = mutation({
     args: {fileId: v.id('files')},
@@ -116,10 +139,35 @@ export const deleteFile = mutation({
         if (!isAdmin) {
             throw new ConvexError('You do no admim access accesss to this file')
         }
-        await ctx.db.delete(args.fileId)
+        // await ctx.db.delete(args.fileId);
+        await ctx.db.patch(args.fileId, {
+            shouldDelete: true,
+        });
     }
 });
 
+export const restoreFile = mutation({
+    args: {fileId: v.id('files')},
+    async handler(ctx, args) {
+
+        const access = await hasAccessToFile(
+            ctx, args.fileId
+        );
+
+        if (!access) {
+           throw new ConvexError('You do not have accesss to this file')
+        }
+
+        const isAdmin = access.user.orgIds.find(org => org.orgId === access.file.orgId)?.role === 'admin';
+        
+        if (!isAdmin) {
+            throw new ConvexError('You do no admim access accesss to this file')
+        }
+        await ctx.db.patch(args.fileId, {
+            shouldDelete: false,
+        });
+    }
+});
 
 export const toogleFavorite = mutation({
     args: {fileId: v.id('files')},
