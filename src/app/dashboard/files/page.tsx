@@ -1,14 +1,17 @@
 'use client'
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {  useOrganization, useUser } from "@clerk/nextjs";
 import {  useQuery } from "convex/react";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { GridIcon, Loader2, RowsIcon, TableIcon } from "lucide-react";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import SearchBar from "./search-bar";
 import UploadButton from "@/app/dashboard/files/upload-button";
 import FileCard from "@/app/dashboard/files/file-card";
+import { DataTable } from "../_components/file-table";
+import { columns } from "../_components/columns";
 
 export default function FilesPage() {
 
@@ -34,6 +37,27 @@ export default function FilesPage() {
 
             </div>
 
+            <Tabs defaultValue="grid" >
+            <TabsList className="mb-4">
+              <TabsTrigger className="flex gap-2 items-center" value="grid"> <GridIcon /> Grid </TabsTrigger>
+              <TabsTrigger className="flex gap-2 items-center" value="table"> <RowsIcon/> Table </TabsTrigger>
+            </TabsList>
+            <TabsContent  value="grid">
+            
+            <div className="grid grid-cols-4 xs:grid-cols-1 sm:grid-cols-2 gap-4">  
+                {files?.map((item) => {
+                return( 
+                    <FileCard key={item._id} file={item}/>
+                    )
+                })}
+            </div>  
+            </TabsContent>
+            <TabsContent value="table">
+            <DataTable columns={columns} data={files} />
+            </TabsContent>
+          </Tabs>
+
+
             {files === undefined && (
                 <div className="flex-col flex gap-8 w-full items-center mt-12 text-gray-500">
                 <Loader2 className="h-32 w-32 animate-spin"/>
@@ -48,15 +72,10 @@ export default function FilesPage() {
                     You have no files go and upload files
                     </div>
                 </div>
-                
             )}
-            <div className="grid grid-cols-4 xs:grid-cols-1 sm:grid-cols-2 gap-4">  
-                {files?.map((item) => {
-                return( 
-                    <FileCard key={item._id} file={item}/>
-                    )
-                })}
-            </div>
+
+             
+
 </>
   );
 }
