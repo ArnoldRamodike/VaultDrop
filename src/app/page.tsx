@@ -1,6 +1,6 @@
 'use client'
 
-import {   useOrganization, useUser } from "@clerk/nextjs";
+import {   SignedIn, SignedOut, SignInButton, SignOutButton, useOrganization, useUser } from "@clerk/nextjs";
 import {  useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import UploadButton from "./dashboard/files/upload-button";
@@ -28,8 +28,8 @@ export default function Home() {
   
   return (
     <main className="container mx-auto pt-12">
-      {/* <div className="flex gap-8">
-      <div className="w-40 flex-col gap-4">
+       <div className="flex gap-8">
+      {/*<div className="w-40 flex-col gap-4">
         <Link href='/'>
           <Button variant={'link'} className="flex gap-2">
           <FileIcon/>  All Files
@@ -72,7 +72,9 @@ export default function Home() {
             )
         })}
      </div>
+    
      </div>
+      */}
            <SignedIn>
         <SignOutButton>
           <Button>Sign Out</Button>
@@ -84,7 +86,7 @@ export default function Home() {
             <Button>Sign in</Button>
          </SignInButton>
       </SignedOut>
-      </div> */}
+      </div> 
     </main>
   );
 }

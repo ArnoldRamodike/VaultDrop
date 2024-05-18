@@ -99,11 +99,9 @@ export default function UploadButton() {
           form.reset();
           }}>
           <DialogTrigger>
-            <Button onClick={() => { 
-              
-                }}>
+            {/* <Button onClick={() => { }}> */}
                   upload file
-            </Button>
+            {/* </Button> */}
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
