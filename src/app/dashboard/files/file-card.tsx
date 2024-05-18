@@ -51,8 +51,15 @@ function FileCardActions({file, isFavorited}: {file: Doc<'files'>, isFavorited: 
 
         <DropdownMenu>
             <DropdownMenuTrigger><MoreVertical/></DropdownMenuTrigger>
-            <DropdownMenuContent >
-            <DropdownMenuItem onClick={() => toogleFavorite({fileId: file._id })} 
+              <DropdownMenuContent >
+                <DropdownMenuItem className='gap-1'
+                 onClick={() => {
+                  window.open(getFileUrl(file.fileId), "_blank");
+                }}>
+                  <Download className='w-4 h-4' /> Download 
+                </DropdownMenuItem>
+                <DropdownMenuSeparator/>
+              <DropdownMenuItem onClick={() => toogleFavorite({fileId: file._id })} 
                     className='flex gap-1 text-blue-600 items-center cursor-pointer'> 
                     {isFavorited ? (
                     <div className="flex items-center gap-1">
@@ -87,12 +94,7 @@ function FileCardActions({file, isFavorited}: {file: Doc<'files'>, isFavorited: 
                      }
                    
                 </DropdownMenuItem>
-                <DropdownMenuSeparator/>
-                <DropdownMenuItem onClick={() => {
-                  window.open(getFileUrl(file.fileId), "_blank");
-                }}>
-                  <Download className='w-4 h-4' /> Download 
-                </DropdownMenuItem>
+               
                 </Protect>
             </DropdownMenuContent>
         </DropdownMenu>
@@ -122,7 +124,7 @@ const FileCard = ({file, favorites}: {file: Doc<'files'>, favorites: Doc<'favori
   return (
         <Card className='gap-2'>
             <CardHeader className='relative'>
-                <CardTitle className='flex gap-2'>
+                <CardTitle className='flex gap-2 text-base font-normal'>
                 <div className='flex justify-center items-center'>{typeIcons[file.type]}</div>
                     {file.name} 
                 </CardTitle>
