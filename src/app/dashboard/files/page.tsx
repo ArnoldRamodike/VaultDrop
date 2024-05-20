@@ -14,6 +14,7 @@ import { DataTable } from "../_components/file-table";
 import { columns } from "../_components/columns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select"
 import { Doc } from "../../../../convex/_generated/dataModel";
+import { Label } from "@/components/ui/label";
 
 
 export default function FilesPage() {
@@ -46,11 +47,12 @@ export default function FilesPage() {
               <TabsTrigger className="flex gap-2 items-center" value="grid"> <GridIcon /> Grid </TabsTrigger>
               <TabsTrigger className="flex gap-2 items-center" value="table"> <RowsIcon/> Table </TabsTrigger>
             </TabsList>
-              <div className="">
+              <div className="flex gap-2 items-center ">
+                <Label htmlFor="type-select">Type Filter</Label>
                 <Select value={type} onValueChange={(newType) => {
                   setType(newType as any);
                 }}>
-                  <SelectTrigger className="w-[180px]" >
+                  <SelectTrigger id="type-select" className="w-[180px]" >
                     <SelectValue  />
                   </SelectTrigger>
                   <SelectContent>
