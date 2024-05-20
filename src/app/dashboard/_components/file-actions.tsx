@@ -4,7 +4,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
     AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger} from "@/components/ui/alert-dialog"
 import { Doc, Id } from '../../../../convex/_generated/dataModel'
 import {  Download, MoreVertical, StarHalfIcon, StarIcon, Trash2Icon, UndoIcon } from 'lucide-react'
-import { useMutation} from 'convex/react';
+import { useMutation, useQuery} from 'convex/react';
 import { api } from '../../../../convex/_generated/api';
 import { useToast } from '@/components/ui/use-toast';
 import { Protect } from '@clerk/nextjs';
@@ -19,7 +19,7 @@ function FileCardActions({file, isFavorited}: {file: Doc<'files'>, isFavorited: 
     const restoreFile = useMutation(api.files.restoreFile);
     const toogleFavorite = useMutation(api.files.toogleFavorite);
     const { toast } = useToast();
-
+    const me = useQuery(api.users.getMe);
 
 
     return(
@@ -75,7 +75,12 @@ function FileCardActions({file, isFavorited}: {file: Doc<'files'>, isFavorited: 
                 </DropdownMenuItem>
                 
                 <Protect 
-                    role='org:admin' 
+                  condition={(check) => {
+                    return check({
+                        role: 'org: admin',
+
+                    }) || file.userId === me?._id
+                  } }
                     fallback={<></>}
                 >
                 <DropdownMenuSeparator />
